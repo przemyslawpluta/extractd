@@ -20,6 +20,7 @@ describe('# batch extract files', () => {
             `${samples}/sony_a7r_iii_01.arw`,
             `${samples}/panasonic_s1r_01.rw2`,
             `${samples}/pentax_k_1_mark_ii_01.dng`,
+            `${samples}/fujifilm_x_t3_01.raf`,
             `${samples}/dummyFile.nef`
         ];
 
@@ -31,7 +32,7 @@ describe('# batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(6);
+            expect(done).to.have.lengthOf(7);
 
         });
 
@@ -119,6 +120,23 @@ describe('# batch extract files', () => {
         it('pentax preview item in the array should contain objects with preview and source files', async () => {
 
             const item = done.filter(item => item.preview).filter(item => item.preview.includes('pentax')).shift();
+
+            expect(item).to.have.own.property('preview');
+            expect(item).to.have.own.property('source');
+
+            expect(path.dirname(item.source)).to.be.deep.equal(path.dirname(item.preview));
+
+            expect(path.basename(item.source, path.extname(item.source))).to.be.deep.equal(path.basename(item.preview, '.jpg'));
+
+            expect(path.extname(item.preview)).to.deep.equal('.jpg');
+
+            await del(item.preview);
+
+        });
+
+        it('fujifilm preview item in the array should contain objects with preview and source files', async () => {
+
+            const item = done.filter(item => item.preview).filter(item => item.preview.includes('fujifilm')).shift();
 
             expect(item).to.have.own.property('preview');
             expect(item).to.have.own.property('source');

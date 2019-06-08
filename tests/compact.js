@@ -20,6 +20,7 @@ describe('# compact batch extract files', () => {
             `${samples}/sony_a7r_iii_01.arw`,
             `${samples}/panasonic_s1r_01.rw2`,
             `${samples}/pentax_k_1_mark_ii_01.dng`,
+            `${samples}/fujifilm_x_t3_01.raf`,
             `${samples}/dummyFile.nef`
         ];
 
@@ -33,7 +34,7 @@ describe('# compact batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(5);
+            expect(done).to.have.lengthOf(6);
 
         });
 
@@ -98,6 +99,18 @@ describe('# compact batch extract files', () => {
         it('pentax preview should be returned in array', async () => {
 
             const item = done.filter(item => item.includes('pentax')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('fujifilm preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('fujifilm')).shift();
 
             expect(item).to.be.a('string');
 
