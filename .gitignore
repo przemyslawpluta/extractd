@@ -1,0 +1,9 @@
+.env
+.DS_Store
+.vscode
+.eslintrc.json
+*.tgz
+raws
+node_modules
+logs
+npm-debug.log
