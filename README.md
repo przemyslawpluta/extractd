@@ -32,7 +32,7 @@ const extractd = require('extractd');
 
 (async () => {
 
-    const done = await extractd('/directory/nikon_d850_01.nef');
+    const done = await extractd.generate('/directory/nikon_d850_01.nef');
 
 })();
 ```
@@ -49,6 +49,26 @@ Response `done (object)` will be similar to:
 - preview - location of the preview image
 - source - location of the original RAW image
 
+```js
+
+const done = await extractd.generate('/directory/nikon_d850_01.nef', {
+  persist: true
+});
+
+const status = extractd.status();
+
+```
+
+Response `status (object)` will be similar to:
+
+```js
+{
+  persistent: true
+}
+```
+
+- persistent - status indicates that `exif` process is already live and calls can join in
+
 ### Basic stream usage
 
 ```js
@@ -57,7 +77,7 @@ const pipeline = require('util').promisify(require('stream').pipeline);
 
 (async () => {
 
-    const done = await extractd('/directory/nikon_d850_01.nef', {
+    const done = await extractd.generate('/directory/nikon_d850_01.nef', {
         stream: true
     });
 
@@ -81,17 +101,17 @@ Response `done (object)` will be similar to:
 ### Complex usage
 
 ```js
-const canon = await extractd('/directory/canon_eos_5d_mark_iv_01.cr2', {
+const canon = await extractd.generate('/directory/canon_eos_5d_mark_iv_01.cr2', {
   compact: true,
   persist: true
 });
 
-const nikon = await extractd('/directory/nikon_d850_01.nef', {
+const nikon = await extractd.generate('/directory/nikon_d850_01.nef', {
   compact: true,
   persist: true
 });
 
-const panasonic = await extractd('/directory/panasonic_s1r_01.rw2', {
+const panasonic = await extractd.generate('/directory/panasonic_s1r_01.rw2', {
   compact: true
 });
 
@@ -118,7 +138,7 @@ const extractd = require('extractd');
 
 (async () => {
 
-    const done = await extractd([
+    const done = await extractd.generate([
       '/directory/nikon_d850_01.nef',
       '/directory/sony_a7r_iii_01.arw',
       '/directory/pentax_k_1_mark_ii_01.dng'
@@ -153,7 +173,7 @@ const extractd = require('extractd');
 
 (async () => {
 
-    const batch = await extractd([
+    const batch = await extractd.generate([
       '/directory/nikon_d850_01.nef',
       '/directory/sony_a7r_iii_01.arw',
       '/directory/pentax_k_1_mark_ii_01.dng'
@@ -161,11 +181,11 @@ const extractd = require('extractd');
       persist: true
     });
 
-    const file01 = await extractd('/directory/fujifilm_gfx_50s_01.raf', {
+    const file01 = await extractd.generate('/directory/fujifilm_gfx_50s_01.raf', {
       persist: true
     });
 
-    const file02 = await extractd('/directory/panasonic_s1r_01.rw2');
+    const file02 = await extractd.generate('/directory/panasonic_s1r_01.rw2');
 
     const done = [...batch, ...[file01], ...[file02]];
 
@@ -210,7 +230,7 @@ const extractd = require('extractd');
 
 (async () => {
 
-    const done = await extractd('/directory/dummyFile.nef');
+    const done = await extractd.generate('/directory/dummyFile.nef');
 
 })();
 ```

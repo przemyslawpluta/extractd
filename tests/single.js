@@ -16,9 +16,7 @@ describe('# extract single file', () => {
 
         it('should return file not found error', async () => {
             const source = 'dummyFile.nef';
-            const done = await extractd(source, {
-                persist: true
-            });
+            const done = await extractd.generate(source);
 
             expect(done).to.be.an('object');
 
@@ -26,6 +24,14 @@ describe('# extract single file', () => {
                 error: 'File not found',
                 source: `/${source}`
             });
+
+        });
+
+        it('should indicate no persistent status', () => {
+
+            const status = extractd.status();
+
+            expect(status.persistent).to.be.false;
 
         });
 
@@ -38,12 +44,20 @@ describe('# extract single file', () => {
 
         it('should return an object', async () => {
 
-            done = await extractd(source, {
+            done = await extractd.generate(source, {
                 persist: true,
                 destination: samples
             });
 
             expect(done).to.be.an('object');
+
+        });
+
+        it('should indicate persistent status with ability to join', () => {
+
+            const status = extractd.status();
+
+            expect(status.persistent).to.be.true;
 
         });
 
@@ -80,7 +94,7 @@ describe('# extract single file', () => {
 
         it('should return an object', async () => {
 
-            done = await extractd(source, {
+            done = await extractd.generate(source, {
                 stream: true,
                 persist: true,
                 destination: samples

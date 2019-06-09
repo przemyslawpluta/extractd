@@ -24,9 +24,17 @@ describe('# batch extract files', () => {
             `${samples}/dummyFile.nef`
         ];
 
+        it('should indicate persistent status with ability to join', () => {
+
+            const status = extractd.status();
+
+            expect(status.persistent).to.be.true;
+
+        });
+
         it('should return an array', async () => {
 
-            done = await extractd(source, {
+            done = await extractd.generate(source, {
                 destination: samples
             });
 

@@ -3,7 +3,10 @@ const path = require('path');
 const temp = require('temp-dir');
 const ExifTool = require('exiftool-vendored').ExifTool;
 
-let globalExif = null;
+const master = {
+    exiftool: null,
+    persist: false
+};
 
 const exiftoolArgs = ['-E', '-stay_open', 'True', '-@', '-'];
 
@@ -54,7 +57,13 @@ function streamWipe(file) {
     return item;
 }
 
-async function extractd(list, options = {}, exiftool = null, items = [], main = {}) {
+function status() {
+    return {
+        persistent: master.persist
+    };
+}
+
+async function generate(list, options = {}, exiftool = null, items = [], main = {}) {
 
     if (typeof list === 'string') {
         list = [list];
@@ -72,19 +81,20 @@ async function extractd(list, options = {}, exiftool = null, items = [], main = 
 
     await outcome(remove(preview));
 
-    if (!globalExif && (!exiftool && !options.persist)) {
+    if (!master.exiftool && (!exiftool && !options.persist)) {
         exiftool = new ExifTool({
             exiftoolArgs
         });
     }
 
-    if (!globalExif && options.persist) {
-        globalExif = new ExifTool({
+    if (!master.exiftool && options.persist) {
+        master.persist = true;
+        master.exiftool = new ExifTool({
             exiftoolArgs
         });
     }
 
-    const meta = await outcome((globalExif || exiftool).read(source));
+    const meta = await outcome((master.exiftool || exiftool).read(source));
 
     if (meta.success) {
 
@@ -94,11 +104,11 @@ async function extractd(list, options = {}, exiftool = null, items = [], main = 
 
         if (listPreviews) {
 
-            await (globalExif || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview);
+            await (master.exiftool || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview);
 
             if (meta.result.Orientation && typeof meta.result.Orientation === 'number') {
 
-                await (globalExif || exiftool).write(preview, {
+                await (master.exiftool || exiftool).write(preview, {
                     Orientation: orientations[meta.result.Orientation - 1]
                 }, ['-overwrite_original_in_place']);
 
@@ -126,11 +136,12 @@ async function extractd(list, options = {}, exiftool = null, items = [], main = 
     items.push(main);
 
     if (list.length) {
-        return extractd(list, options, exiftool, items);
+        return generate(list, options, exiftool, items);
     }
 
     if (!options.persist) {
-        (globalExif || exiftool).end();
+        (master.exiftool || exiftool).end();
+        master.persist = false;
     }
 
     if (options.compact) {
@@ -141,4 +152,7 @@ async function extractd(list, options = {}, exiftool = null, items = [], main = 
 
 };
 
-module.exports = extractd;
+module.exports = {
+    generate,
+    status
+};
