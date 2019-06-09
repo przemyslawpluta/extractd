@@ -1,7 +1,7 @@
 {
   "name": "extractd",
-  "version": "1.0.1",
-  "description": "extract previews from DSLR and Mirrorless cameras RAW files",
+  "version": "1.0.2",
+  "description": "Extract previews from DSLR and mirrorless cameras' RAW files",
   "main": "extractd.js",
   "scripts": {
     "test": "mocha --timeout 0 tests/single.js tests/compact.js tests/batch.js",
@@ -26,23 +26,27 @@
   },
   "homepage": "https://github.com/przemyslawpluta/extractd",
   "keywords": [
-    "JpgFromRaw",
-    "extractJpgFromRaw",
-    "PreviewImage",
-    "extractPreview",
-    "DSLR",
-    "NEF",
-    "CR2",
-    "RAF",
-    "DNG",
-    "RW2",
-    "ARW"
+    "jpgfromraw",
+    "extractjpgfromraw",
+    "previewimage",
+    "extractpreview",
+    "photography",
+    "preview",
+    "raw",
+    "jpg",
+    "dslr",
+    "nef",
+    "cr2",
+    "raf",
+    "dng",
+    "rw2",
+    "arw"
   ],
   "engines": {
     "node": ">= 10.0.0"
   },
   "dependencies": {
-    "exiftool-vendored": "^8.11.0",
+    "exiftool-vendored": "^8.12.0",
     "temp-dir": "^2.0.0"
   },
   "devDependencies": {

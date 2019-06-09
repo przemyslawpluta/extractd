@@ -46,6 +46,14 @@ function remove(target) {
     });
 }
 
+function streamWipe(file) {
+    const item = fs.createReadStream(file);
+    item.on('end', async () => {
+        await outcome(remove(file));
+    });
+    return item;
+}
+
 async function extractd(list, options = {}, exiftool = null, items = [], main = {}) {
 
     if (typeof list === 'string') {
@@ -97,7 +105,7 @@ async function extractd(list, options = {}, exiftool = null, items = [], main = 
             }
 
             main = {
-                preview,
+                preview: !options.stream ? preview : streamWipe(preview),
                 source
             };
 

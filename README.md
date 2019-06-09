@@ -4,7 +4,7 @@
 [![Downloads](https://img.shields.io/npm/dm/extractd.svg)](https://npmjs.org/package/extractd)
 [![CircleCI](https://img.shields.io/circleci/project/github/przemyslawpluta/extractd/master.svg)](https://circleci.com/gh/przemyslawpluta/extractd/tree/master)
 
-Extract previews from DSLR and Mirrorless cameras RAW files.
+Extract previews from DSLR and mirrorless cameras' RAW files.
 
 ## Installation
 
@@ -22,6 +22,7 @@ Workflow allows to extract previews directly from RAW files. Available options:
 
 - **compact** `optional (boolean)` - returns compact list of the preview files (defaults to false).
 - **destination** `optional (string)` - directory where preview image will be saved (defaults to RAW image directory).
+- **stream** `optional (boolean)` - by default `exif` process generates the preview file in the temp directory in the OS or in `destination` if provided; once enabled `preview` is returned as a readeble stream which source will by automatically deleted after fully piped (defaults to false).
 - **persist** `optional (boolean)` - by default `exif` process will be initialised and killed of per extractd call; with `persist` enabled same `exif` process can be used across all calls for single file and batch processing (defaults to false).
 
 ### Basic usage
@@ -46,6 +47,32 @@ Response `done (object)` will be similar to:
 ```
 
 - preview - location of the preview image
+- source - location of the original RAW image
+
+### Basic stream usage
+
+```js
+const extractd = require('extractd');
+
+(async () => {
+
+    const done = await extractd('/directory/nikon_d850_01.nef', {
+      stream: true
+    });
+
+})();
+```
+
+Response `done (object)` will be similar to:
+
+```js
+  {
+    preview: ReadStream,
+    source: '/directory/nikon_d850_01.nef'
+  }
+```
+
+- preview - readable stream which source will be deleted once fully piped
 - source - location of the original RAW image
 
 ### Complex usage

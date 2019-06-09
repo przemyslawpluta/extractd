@@ -1,10 +1,12 @@
 const fs = require('fs');
+const stream = require('stream');
 const util = require('util');
 const path = require('path');
 const expect = require('chai').expect;
 const extractd = require('../extractd');
 
 const del = util.promisify(fs.unlink);
+const pipeline = util.promisify(stream.pipeline);
 
 const samples = path.resolve(__dirname, '..', 'samples');
 
@@ -65,6 +67,71 @@ describe('# extract single file', () => {
             expect(preview).to.be.deep.equal(path.basename(source, '.nef') + '.jpg');
 
             await del(done.preview);
+
+        });
+
+    });
+
+    context('with existing file and set destination outcome as a stream', () => {
+
+        let done = {};
+        const source = `${samples}/nikon_d850_01.nef`;
+        const pipedFile = `${samples}/myNewPipedFile.jpg`;
+
+        it('should return an object', async () => {
+
+            done = await extractd(source, {
+                stream: true,
+                persist: true,
+                destination: samples
+            });
+
+            expect(done).to.be.an('object');
+
+        });
+
+        it('object should contain preview and original source', () => {
+
+            expect(done).to.have.own.property('preview');
+            expect(done).to.have.own.property('source');
+
+        });
+
+        it('preview should be accessible as a stream', () => {
+
+            expect(typeof done.preview.on === 'function').to.be.true;
+
+        });
+
+        it('source directory and preview destination should be the same', () => {
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(done.preview.path));
+
+        });
+
+        it('should generate temp streamable preview file', async () => {
+
+            const preview = path.basename(done.preview.path);
+
+            expect(preview).to.be.deep.equal(path.basename(source, '.nef') + '.jpg');
+
+        });
+
+        it('preview can be piped in to a file stream', async () => {
+
+            await pipeline(done.preview, fs.createWriteStream(pipedFile));
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(pipedFile));
+
+        });
+
+        it('should generate preview file', async () => {
+
+            const preview = path.basename(pipedFile);
+
+            expect(preview).to.be.deep.equal(path.basename(pipedFile));
+
+            await del(pipedFile);
 
         });
 
