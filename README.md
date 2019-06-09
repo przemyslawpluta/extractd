@@ -53,12 +53,15 @@ Response `done (object)` will be similar to:
 
 ```js
 const extractd = require('extractd');
+const pipeline = require('util').promisify(require('stream').pipeline);
 
 (async () => {
 
     const done = await extractd('/directory/nikon_d850_01.nef', {
-      stream: true
+        stream: true
     });
+
+    await pipeline(done.preview, require('fs').createWriteStream('/my/new/directory/nikon_d850_01.jpg'));
 
 })();
 ```
