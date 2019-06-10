@@ -49,14 +49,26 @@ Response `done (object)` will be similar to:
 - preview - location of the preview image
 - source - location of the original RAW image
 
+### Persistent status check
+
 ```js
 
 const done = await extractd.generate('/directory/nikon_d850_01.nef', {
-  persist: true
+  persist: true,
+  destination: '/directory/'
 });
 
 const status = extractd.status();
 
+```
+
+Response `done (object)` will be similar to:
+
+```js
+  {
+    preview: '/directory/nikon_d850_01.jpg',
+    source: '/directory/nikon_d850_01.nef'
+  }
 ```
 
 Response `status (object)` will be similar to:
@@ -67,7 +79,7 @@ Response `status (object)` will be similar to:
 }
 ```
 
-- persistent - status indicates that `exif` process is already live and calls can join in
+- persistent - status indicates that `exif` process is already live and additional calls can join in or next call should terminate it
 
 ### Basic stream usage
 

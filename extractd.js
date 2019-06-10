@@ -69,10 +69,16 @@ async function generate(list, options = {}, exiftool = null, items = [], main = 
         list = [list];
     }
 
+    if (typeof options !== 'object') {
+        return main = {
+            error: `Expected options object got ${typeof options} instead`
+        };
+    }
+
     if (!options.destination) {
         options.destination = temp;
     } else {
-        options.destination = path.normalize(options.destination);
+        options.destination = path.resolve(options.destination);
     }
 
     const target = path.parse(list.shift());
