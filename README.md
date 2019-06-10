@@ -21,7 +21,7 @@ Multiple examples can be located in [examples](https://github.com/przemyslawplut
 Workflow allows to extract previews directly from RAW files. Available options:
 
 - **compact** `optional (boolean)` - returns compact list of the preview files (defaults to false).
-- **destination** `optional (string)` - directory where preview image will be saved (defaults to RAW image directory).
+- **destination** `optional (string)` - directory where preview image will be saved to; if destination does not exists it will be created (defaults to OS temp directory).
 - **stream** `optional (boolean)` - by default `exif` process generates the preview file in the temp directory in the OS or in `destination` if provided; once enabled `preview` is returned as a readeble stream which source will by automatically deleted after fully piped (defaults to false).
 - **persist** `optional (boolean)` - by default `exif` process will be initialised and killed of per extractd call; with `persist` enabled same `exif` process can be used across all calls for single file and batch processing (defaults to false).
 
