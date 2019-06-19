@@ -86,7 +86,36 @@ function status() {
     };
 }
 
-async function generate(list, options = {}, exiftool = null, items = [], main = {}) {
+function result(source, list) {
+    const item = list.shift();
+
+    if (!item) {
+        return result(source, list);
+    }
+
+    if (item instanceof Error) {
+
+        let error = item;
+
+        if (error.message && error.message.includes(' - ')) {
+            error = error.message.split(' - ').shift();
+        }
+
+        if (error.message && error.message.includes('\n')) {
+            error = error.message.split('\n').pop();
+        }
+
+        return {
+            error,
+            source
+        };
+    }
+
+    return item;
+
+}
+
+async function generate(list, options = {}, exiftool = null, items = [], create = {}, main = null) {
 
     if (typeof list === 'string') {
         list = [list];
@@ -135,36 +164,30 @@ async function generate(list, options = {}, exiftool = null, items = [], main = 
 
         if (listPreviews) {
 
-            await (master.exiftool || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview);
+            create = await outcome((master.exiftool || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview));
 
-            if (meta.result.Orientation && typeof meta.result.Orientation === 'number') {
+            if (create.success) {
 
-                await (master.exiftool || exiftool).write(preview, {
-                    Orientation: orientations[meta.result.Orientation - 1]
-                }, ['-overwrite_original_in_place']);
+                if (meta.result.Orientation && typeof meta.result.Orientation === 'number') {
+
+                    await (master.exiftool || exiftool).write(preview, {
+                        Orientation: orientations[meta.result.Orientation - 1]
+                    }, ['-overwrite_original_in_place']);
+
+                }
+
+                main = {
+                    preview: !options.stream ? preview : streamWipe(preview),
+                    source
+                };
 
             }
 
-            main = {
-                preview: !options.stream ? preview : streamWipe(preview),
-                source
-            };
-
-        } else {
-            main = {
-                error: 'No preview detected in the file',
-                source
-            };
         }
 
-    } else {
-        main = {
-            error: (meta.error.message) ? meta.error.message.split(' - ').shift() : meta.error,
-            source
-        }
     }
 
-    items.push(main);
+    items.push(result(source, [main, meta.error, create.error]));
 
     if (list.length) {
         return generate(list, options, exiftool, items);
