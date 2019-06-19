@@ -1,8 +1,11 @@
 const fs = require('fs');
+const util = require('util');
 const path = require('path');
 const temp = require('temp-dir');
 const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
+
+const stat = util.promisify(fs.lstat);
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@');
 
@@ -60,6 +63,23 @@ function streamWipe(file) {
     return item;
 }
 
+async function exists(source) {
+
+    const file = await outcome(stat(source));
+
+    if (file.success && file.result.isFile()) {
+        return true;
+    }
+
+    if (file.success && !file.result.isFile()) {
+        return false;
+    }
+
+    if (!file.success && file.error.code === 'ENOENT') {
+        return false;
+    }
+}
+
 function status() {
     return {
         persistent: master.persist
@@ -88,11 +108,9 @@ async function generate(list, options = {}, exiftool = null, items = [], main = 
     const source = `${target.dir}/${target.name}${target.ext}`;
     let preview = `${options.destination}/${target.name}.jpg`;
 
-    if (source === preview) {
-        preview = `${options.destination}/${target.name}${Array.from(shortid.generate()).slice(0, 9).join('')}.jpg`;
+    if (await exists(preview)) {
+        preview = `${options.destination}/${target.name}-${Array.from(shortid.generate()).slice(0, 9).join('')}.jpg`;
     }
-
-    await outcome(remove(preview));
 
     if (!master.exiftool && (!exiftool && !options.persist)) {
         exiftool = new ExifTool({
