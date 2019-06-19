@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const temp = require('temp-dir');
+const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
+
+shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@');
 
 const master = {
     exiftool: null,
@@ -82,8 +85,12 @@ async function generate(list, options = {}, exiftool = null, items = [], main = 
     }
 
     const target = path.parse(list.shift());
-    const source = target.dir + '/' + target.name + target.ext;
-    const preview = options.destination + '/' + target.name + '.jpg';
+    const source = `${target.dir}/${target.name}${target.ext}`;
+    let preview = `${options.destination}/${target.name}.jpg`;
+
+    if (source === preview) {
+        preview = `${options.destination}/${target.name}${Array.from(shortid.generate()).slice(0, 9).join('')}.jpg`;
+    }
 
     await outcome(remove(preview));
 
