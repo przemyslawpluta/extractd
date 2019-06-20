@@ -1,5 +1,6 @@
 const fs = require('fs');
 const util = require('util');
+const stream = require('stream');
 const extractd = require('../extractd');
 
 const pipeline = util.promisify(stream.pipeline);

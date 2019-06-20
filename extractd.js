@@ -49,7 +49,7 @@ function remove(target) {
         fs.unlink(target, (err) => {
             if (err) {
                 return reject(err);
-            };
+            }
             resolve();
         });
     });
@@ -212,7 +212,7 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
 
     return (items.length === 1) ? items.shift() : items;
 
-};
+}
 
 module.exports = {
     generate,
