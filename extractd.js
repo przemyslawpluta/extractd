@@ -87,6 +87,14 @@ function status() {
 }
 
 function result(source, list) {
+
+    if (!list.length) {
+        return {
+            error: 'No preview detected',
+            source
+        };
+    }
+
     const item = list.shift();
 
     if (!item) {
@@ -187,7 +195,7 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
 
     }
 
-    items.push(result(source, [main, meta.error, create.error]));
+    items.push(result(source, [main, meta.error, create.error].filter(item => item)));
 
     if (list.length) {
         return generate(list, options, exiftool, items);

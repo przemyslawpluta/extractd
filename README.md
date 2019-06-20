@@ -264,6 +264,10 @@ To run all available tests
 npm test
 ```
 
+## Test samples
+
+All test samples are based on original raw files sourced from [photography blog](https://www.photographyblog.com/reviews) and [hasselblad](https://www.hasselblad.com/learn/sample-images/) sites.
+
 ## License
 
 The MIT License (MIT). Please see [license](https://github.com/przemyslawpluta/extractd/blob/master/LICENSE) file for more information.

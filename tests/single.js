@@ -37,6 +37,32 @@ describe('# extract single file', () => {
 
     });
 
+    context('with existing file but non jpg preview format', () => {
+
+        it('should return file not found error', async () => {
+
+            const source = `${samples}/hasselblad_x1d_01.fff`;
+            const done = await extractd.generate(source);
+
+            expect(done).to.be.an('object');
+
+            expect(done).to.deep.equal({
+                error: 'No preview detected',
+                source: `${source}`
+            });
+
+        });
+
+        it('should indicate no persistent status', () => {
+
+            const status = extractd.status();
+
+            expect(status.persistent).to.be.false;
+
+        });
+
+    });
+
     context('with existing file and set destination', () => {
 
         let done = {};
