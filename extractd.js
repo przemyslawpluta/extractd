@@ -86,6 +86,15 @@ function status() {
     };
 }
 
+async function desist() {
+    if (master.exiftool && master.persist) {
+        await master.exiftool.end();
+        master.exiftool = null;
+        master.persist = false;
+    }
+    return status();
+}
+
 function result(source, list) {
 
     if (!list.length) {
@@ -201,9 +210,12 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
         return generate(list, options, exiftool, items);
     }
 
-    if (!options.persist) {
-        (master.exiftool || exiftool).end();
-        master.persist = false;
+    if (!options.persist && exiftool) {
+        await exiftool.end();
+    }
+
+    if (!options.persist && master.exiftool) {
+        await desist();
     }
 
     if (options.compact) {
@@ -215,6 +227,7 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
 }
 
 module.exports = {
-    generate,
-    status
+    status,
+    desist,
+    generate
 };

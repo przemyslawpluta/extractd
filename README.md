@@ -60,6 +60,8 @@ const done = await extractd.generate('/directory/nikon_d850_01.nef', {
 
 const status = extractd.status();
 
+const desist = await extractd.desist();
+
 ```
 
 Response `done (object)` will be similar to:
@@ -80,6 +82,16 @@ Response `status (object)` will be similar to:
 ```
 
 - persistent - status indicates that `exif` process is already live and additional calls can join in or next call should terminate it
+
+Response `desist (object)` will be similar to:
+
+```js
+{
+  persistent: false
+}
+```
+
+- persistent - `exif` process has been killed off with `desist` and additional calls with `persist` would start new `exif` process
 
 ### Basic stream usage
 

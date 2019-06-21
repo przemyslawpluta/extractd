@@ -118,6 +118,14 @@ describe('# extract single file', () => {
 
         });
 
+        it('should indicate desist status', async () => {
+
+            const status = await extractd.desist();
+
+            expect(status.persistent).to.be.false;
+
+        });
+
         it('object should contain preview and original source', () => {
 
             expect(done).to.have.own.property('preview');
