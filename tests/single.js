@@ -6,6 +6,7 @@ const expect = require('chai').expect;
 const extractd = require('../extractd');
 
 const del = util.promisify(fs.unlink);
+const read = util.promisify(fs.readFile);
 const pipeline = util.promisify(stream.pipeline);
 
 const samples = path.resolve(__dirname, '..', 'samples');
@@ -216,5 +217,157 @@ describe('# extract single file', () => {
 
     });
 
+    context('with existing file and set destination outcome as a base64 stream', () => {
+
+        let done = {};
+        const source = `${samples}/nikon_d850_01.nef`;
+        const pipedFile = `${samples}/myNewBase64PipedFile.txt`;
+
+        it('should return an object', async () => {
+
+            done = await extractd.generate(source, {
+                stream: true,
+                base64: true,
+                persist: true,
+                destination: samples
+            });
+
+            expect(done).to.be.an('object');
+
+        });
+
+        it('object should contain preview and original source', () => {
+
+            expect(done).to.have.own.property('preview');
+            expect(done).to.have.own.property('source');
+
+        });
+
+        it('preview should be accessible as a stream', () => {
+
+            expect(typeof done.preview.on === 'function').to.be.true;
+
+        });
+
+        it('source directory and preview destination should be the same', () => {
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(done.preview.path));
+
+        });
+
+        it('should generate temp streamable preview file', async () => {
+
+            const preview = path.basename(done.preview.path);
+
+            expect(preview).to.be.deep.equal(path.basename(source, '.nef') + '.jpg');
+
+        });
+
+        it('preview can be piped in to a file stream', async () => {
+
+            await pipeline(done.preview, fs.createWriteStream(pipedFile));
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(pipedFile));
+
+        });
+
+        it('should generate preview file', async () => {
+
+            const preview = path.basename(pipedFile);
+
+            expect(preview).to.be.deep.equal(path.basename(pipedFile));
+
+        });
+
+        it('should be base64 jpg encoded file', async () => {
+
+            const content = (await read(pipedFile)).toString();
+
+            const id = content.substring(0, 4);
+
+            expect(id).to.be.deep.equal('/9j/');
+
+            await del(pipedFile);
+
+        });
+
+    });
+
+    context('with existing file and set destination outcome as a base64 stream', () => {
+
+        let done = {};
+        const source = `${samples}/nikon_d850_01.nef`;
+        const pipedFile = `${samples}/myNewBase64URIPipedFile.txt`;
+
+        it('should return an object', async () => {
+
+            done = await extractd.generate(source, {
+                stream: true,
+                base64: true,
+                datauri: true,
+                persist: true,
+                destination: samples
+            });
+
+            expect(done).to.be.an('object');
+
+        });
+
+        it('object should contain preview and original source', () => {
+
+            expect(done).to.have.own.property('preview');
+            expect(done).to.have.own.property('source');
+
+        });
+
+        it('preview should be accessible as a stream', () => {
+
+            expect(typeof done.preview.on === 'function').to.be.true;
+
+        });
+
+        it('source directory and preview destination should be the same', () => {
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(done.preview.path));
+
+        });
+
+        it('should generate temp streamable preview file', async () => {
+
+            const preview = path.basename(done.preview.path);
+
+            expect(preview).to.be.deep.equal(path.basename(source, '.nef') + '.jpg');
+
+        });
+
+        it('preview can be piped in to a file stream', async () => {
+
+            await pipeline(done.preview, fs.createWriteStream(pipedFile));
+
+            expect(path.dirname(done.source)).to.be.deep.equal(path.dirname(pipedFile));
+
+        });
+
+        it('should generate preview file', async () => {
+
+            const preview = path.basename(pipedFile);
+
+            expect(preview).to.be.deep.equal(path.basename(pipedFile));
+
+        });
+
+        it('should be base64 data uri jpg encoded file', async () => {
+
+            const content = (await read(pipedFile)).toString();
+
+            const id = content.substring(0, 27);
+
+            expect(id).to.be.deep.equal('data:image/jpeg;base64,/9j/');
+
+            await del(pipedFile);
+
+        });
+
+    });
 
 });

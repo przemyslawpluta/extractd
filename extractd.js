@@ -2,6 +2,7 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const temp = require('temp-dir');
+const Base64Encode = require('base64-stream').Base64Encode;
 const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
 
@@ -55,11 +56,19 @@ function remove(target) {
     });
 }
 
-function streamWipe(file) {
-    const item = fs.createReadStream(file);
+function streamWipe(file, base64 = false, datauri = false) {
+    const item = !base64 ? fs.createReadStream(file) : fs.createReadStream(file).pipe(new Base64Encode((!datauri ? {} : {
+        prefix: 'data:image/jpeg;base64,'
+    })));
+
+    if (base64) {
+        item.path = file;
+    }
+
     item.on('end', async () => {
         await outcome(remove(file));
     });
+
     return item;
 }
 
@@ -194,7 +203,7 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
                 }
 
                 main = {
-                    preview: !options.stream ? preview : streamWipe(preview),
+                    preview: !options.stream ? preview : streamWipe(preview, options.base64, options.datauri),
                     source
                 };
 

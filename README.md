@@ -122,6 +122,37 @@ Response `done (object)` will be similar to:
 - preview - readable stream which source will be deleted once fully piped
 - source - location of the original RAW image
 
+### Base64 stream usage
+
+```js
+const extractd = require('extractd');
+const pipeline = require('util').promisify(require('stream').pipeline);
+
+(async () => {
+
+    const done = await extractd.generate('/directory/nikon_d850_01.nef', {
+        stream: true,
+        base64: true,
+        datauri: true
+    });
+
+    await pipeline(done.preview, require('fs').createWriteStream('/my/new/directory/nikon_d850_01.jpg'));
+
+})();
+```
+
+Response `done (object)` will be similar to:
+
+```js
+  {
+    preview: ReadStream,
+    source: '/directory/nikon_d850_01.nef'
+  }
+```
+
+- preview - readable base64 datauri stream which source will be deleted once fully piped
+- source - location of the original RAW image
+
 ### Complex usage
 
 ```js
