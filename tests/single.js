@@ -293,7 +293,7 @@ describe('# extract single file', () => {
 
     });
 
-    context('with existing file and set destination outcome as a base64 stream', () => {
+    context('with existing file and set destination outcome as a base64 datauri stream', () => {
 
         let done = {};
         const source = `${samples}/nikon_d850_01.nef`;
