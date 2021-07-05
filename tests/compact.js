@@ -28,6 +28,7 @@ describe('# compact batch extract files', () => {
             `${samples}/fujifilm_x_s10_01.raf`,
             `${samples}/leica_cl_01.dng`,
             `${samples}/leica_v_lux_5_01.rwl`,
+            `${samples}/sigma_sd1_merrill_01.x3f`,
             `${samples}/dummyFile.nef`
         ];
 
@@ -49,7 +50,7 @@ describe('# compact batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(13);
+            expect(done).to.have.lengthOf(14);
 
         });
 
@@ -210,6 +211,18 @@ describe('# compact batch extract files', () => {
         it('leica v preview should be returned in array', async () => {
 
             const item = done.filter(item => item.includes('leica_v')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('sigma preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('sigma')).shift();
 
             expect(item).to.be.a('string');
 

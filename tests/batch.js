@@ -28,6 +28,7 @@ describe('# batch extract files', () => {
             `${samples}/fujifilm_x_s10_01.raf`,
             `${samples}/leica_cl_01.dng`,
             `${samples}/leica_v_lux_5_01.rwl`,
+            `${samples}/sigma_sd1_merrill_01.x3f`,
             `${samples}/dummyFile.nef`
         ];
 
@@ -47,7 +48,7 @@ describe('# batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(14);
+            expect(done).to.have.lengthOf(15);
 
         });
 
@@ -271,6 +272,23 @@ describe('# batch extract files', () => {
         it('leica v preview item in the array should contain objects with preview and source files', async () => {
 
             const item = done.filter(item => item.preview).filter(item => item.preview.includes('leica_v')).shift();
+
+            expect(item).to.have.own.property('preview');
+            expect(item).to.have.own.property('source');
+
+            expect(path.dirname(item.source)).to.be.deep.equal(path.dirname(item.preview));
+
+            expect(path.basename(item.source, path.extname(item.source))).to.be.deep.equal(path.basename(item.preview, '.jpg'));
+
+            expect(path.extname(item.preview)).to.deep.equal('.jpg');
+
+            await del(item.preview);
+
+        });
+
+        it('sigma preview item in the array should contain objects with preview and source files', async () => {
+
+            const item = done.filter(item => item.preview).filter(item => item.preview.includes('sigma')).shift();
 
             expect(item).to.have.own.property('preview');
             expect(item).to.have.own.property('source');
