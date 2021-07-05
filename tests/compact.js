@@ -16,9 +16,13 @@ describe('# compact batch extract files', () => {
 
         const source = [
             `${samples}/nikon_d850_01.nef`,
+            `${samples}/nikon_z7_ii_01.nef`,
             `${samples}/canon_eos_5d_mark_iv_01.cr2`,
+            `${samples}/canon_eos_1d_x_mark_iii_01.cr3`,
             `${samples}/sony_a7r_iii_01.arw`,
+            `${samples}/sony_a9_ii_01.arw`,
             `${samples}/panasonic_s1r_01.rw2`,
+            `${samples}/panasonic_lumix_gh5_ii_01.rw2`,
             `${samples}/pentax_k_1_mark_ii_01.dng`,
             `${samples}/fujifilm_x_t3_01.raf`,
             `${samples}/leica_cl_01.dng`,
@@ -43,7 +47,7 @@ describe('# compact batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(7);
+            expect(done).to.have.lengthOf(11);
 
         });
 
@@ -57,21 +61,9 @@ describe('# compact batch extract files', () => {
 
         });
 
-        it('nikon preview should be returned in array', async () => {
+        it('nikon d850 preview should be returned in array', async () => {
 
-            const item = done.filter(item => item.includes('nikon')).shift();
-
-            expect(item).to.be.a('string');
-
-            expect(path.extname(item)).to.deep.equal('.jpg');
-
-            await del(item);
-
-        });
-
-        it('canon preview should be returned in array', async () => {
-
-            const item = done.filter(item => item.includes('canon')).shift();
+            const item = done.filter(item => item.includes('nikon_d850')).shift();
 
             expect(item).to.be.a('string');
 
@@ -81,9 +73,9 @@ describe('# compact batch extract files', () => {
 
         });
 
-        it('sony preview should be returned in array', async () => {
+        it('nikon z7 preview should be returned in array', async () => {
 
-            const item = done.filter(item => item.includes('sony')).shift();
+            const item = done.filter(item => item.includes('nikon_z7')).shift();
 
             expect(item).to.be.a('string');
 
@@ -93,9 +85,69 @@ describe('# compact batch extract files', () => {
 
         });
 
-        it('panasonic preview should be returned in array', async () => {
+        it('canon eos 5d preview should be returned in array', async () => {
 
-            const item = done.filter(item => item.includes('panasonic')).shift();
+            const item = done.filter(item => item.includes('canon_eos_5d')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('canon eos 1d preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('canon_eos_1d')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('sony a7r preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('sony_a7r')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('sony a9 preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('sony_a9')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('panasonic s1r preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('panasonic_s1r')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('panasonic lumix preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('panasonic_lumix')).shift();
 
             expect(item).to.be.a('string');
 
