@@ -1,6 +1,6 @@
 {
   "name": "extractd",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Extract previews from DSLR and mirrorless cameras' RAW files",
   "main": "extractd.js",
   "scripts": {

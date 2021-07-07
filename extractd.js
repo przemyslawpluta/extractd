@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const temp = require('temp-dir');
+const shortid = require('shortid');
 const Readable = require('stream').Readable;
 const Base64Encode = require('base64-stream').Base64Encode;
-const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
 
 const stat = fs.promises.lstat;
