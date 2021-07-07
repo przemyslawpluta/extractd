@@ -5,8 +5,8 @@ const path = require('path');
 const expect = require('chai').expect;
 const extractd = require('../extractd');
 
-const del = util.promisify(fs.unlink);
-const read = util.promisify(fs.readFile);
+const del = fs.promises.unlink;
+const read = fs.promises.readFile;
 const pipeline = util.promisify(stream.pipeline);
 
 const samples = path.resolve(__dirname, '..', 'samples');

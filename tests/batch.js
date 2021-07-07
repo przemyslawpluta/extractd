@@ -1,10 +1,9 @@
 const fs = require('fs');
-const util = require('util');
 const path = require('path');
 const expect = require('chai').expect;
 const extractd = require('../extractd');
 
-const del = util.promisify(fs.unlink);
+const del = fs.promises.unlink;
 
 const samples = path.resolve(__dirname, '..', 'samples');
 

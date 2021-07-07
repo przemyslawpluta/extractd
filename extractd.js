@@ -1,5 +1,4 @@
 const fs = require('fs');
-const util = require('util');
 const path = require('path');
 const temp = require('temp-dir');
 const Readable = require('stream').Readable;
@@ -7,8 +6,9 @@ const Base64Encode = require('base64-stream').Base64Encode;
 const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
 
-const stat = util.promisify(fs.lstat);
+const stat = fs.promises.lstat;
 const read = fs.promises.readFile;
+const remove = fs.promises.unlink;
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@');
 
@@ -46,17 +46,6 @@ const outcome = (promise) => {
             error
         }));
 };
-
-function remove(target) {
-    return new Promise((resolve, reject) => {
-        fs.unlink(target, (err) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve();
-        });
-    });
-}
 
 function streamWipe(file, base64 = false, datauri = false) {
     const item = !base64 ? fs.createReadStream(file) : fs.createReadStream(file).pipe(new Base64Encode((!datauri ? {} : {
