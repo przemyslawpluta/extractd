@@ -23,7 +23,11 @@ Workflow allows to extract previews directly from RAW files. Available options:
 - **compact** `optional (boolean)` - returns compact list of the preview files (defaults to false).
 - **destination** `optional (string)` - directory where preview image will be saved to; if destination does not exists it will be created (defaults to OS temp directory).
 - **stream** `optional (boolean)` - by default `exif` process generates the preview file in the temp directory in the OS or in `destination` if provided; once enabled `preview` is returned as a readeble stream which source will by automatically deleted after fully piped (defaults to false).
+- **base64** `optional (boolean)` - returns base64 encoded preview string (defaults to false).
+- **datauri** `optional (boolean)` - returns datauri base64 encoded preview string (defaults to false).
 - **persist** `optional (boolean)` - by default `exif` process will be initialised and killed of per extractd call; with `persist` enabled same `exif` process can be used across all calls for single file and batch processing (defaults to false).
+
+Orientation of extracted images will be corrected based on metadata available in the source file.
 
 ### Basic usage
 
@@ -47,6 +51,33 @@ Response `done (object)` will be similar to:
 ```
 
 - preview - location of the preview image
+- source - location of the original RAW image
+
+### Base64 usage
+
+```js
+const extractd = require('extractd');
+
+(async () => {
+
+    const done = await extractd.generate('/directory/nikon_d850_01.nef', {
+        base64: true,
+        datauri: true
+    });
+
+})();
+```
+
+Response `done (object)` will be similar to:
+
+```js
+  {
+    preview: 'data:image/jpeg;base64,/9j/2wCEAAQGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHR...',
+    source: '/directory/nikon_d850_01.nef'
+  }
+```
+
+- preview - datauri base64 preview image
 - source - location of the original RAW image
 
 ### Persistent status check
@@ -136,7 +167,7 @@ const pipeline = require('util').promisify(require('stream').pipeline);
         datauri: true
     });
 
-    await pipeline(done.preview, require('fs').createWriteStream('/my/new/directory/nikon_d850_01.jpg'));
+    await pipeline(done.preview, require('fs').createWriteStream('/my/new/directory/nikon_d850_01.txt'));
 
 })();
 ```
@@ -150,7 +181,7 @@ Response `done (object)` will be similar to:
   }
 ```
 
-- preview - readable base64 datauri stream which source will be deleted once fully piped
+- preview - readable datauri base64 stream
 - source - location of the original RAW image
 
 ### Complex usage

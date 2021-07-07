@@ -1,6 +1,6 @@
 {
   "name": "extractd",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Extract previews from DSLR and mirrorless cameras' RAW files",
   "main": "extractd.js",
   "scripts": {
@@ -9,8 +9,7 @@
   },
   "author": {
     "name": "Przemyslaw Pluta",
-    "email": "przemyslawplutadev@gmail.com",
-    "url": "https://przemyslawpluta.com"
+    "email": "przemyslawplutadev@gmail.com"
   },
   "license": "MIT",
   "repository": {
@@ -51,7 +50,7 @@
   },
   "dependencies": {
     "base64-stream": "^1.0.0",
-    "exiftool-vendored": "^14.6.0",
+    "exiftool-vendored": "^15.1.0",
     "shortid": "^2.2.14",
     "temp-dir": "^2.0.0"
   },

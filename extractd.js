@@ -2,11 +2,13 @@ const fs = require('fs');
 const util = require('util');
 const path = require('path');
 const temp = require('temp-dir');
+const Readable = require('stream').Readable;
 const Base64Encode = require('base64-stream').Base64Encode;
 const shortid = require('shortid');
 const ExifTool = require('exiftool-vendored').ExifTool;
 
 const stat = util.promisify(fs.lstat);
+const read = fs.promises.readFile;
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@');
 
@@ -70,6 +72,25 @@ function streamWipe(file, base64 = false, datauri = false) {
     });
 
     return item;
+}
+
+async function baseCheck(file, base64 = false, datauri = false) {
+    if (!base64) {
+        return file;
+    }
+
+    const content = await read(file, 'base64');
+    await outcome(remove(file));
+
+    return (!datauri) ? content : 'data:image/jpeg;base64,' + content;
+
+}
+
+function bufferToStream(data) {
+    const stream = new Readable();
+    stream.push(data);
+    stream.push(null);
+    return stream;
 }
 
 async function exists(source) {
@@ -141,6 +162,10 @@ function result(source, list) {
 
 }
 
+function isNormal(meta) {
+    return (meta.result.Orientation && typeof meta.result.Orientation === 'number' && orientations[meta.result.Orientation - 1].includes('normal')) ? true : false;
+}
+
 async function generate(list, options = {}, exiftool = null, items = [], create = {}, main = null) {
 
     if (typeof list === 'string') {
@@ -190,23 +215,40 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
 
         if (listPreviews) {
 
-            create = await outcome((master.exiftool || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview));
+            if (options.base64 && isNormal(meta)) {
 
-            if (create.success) {
+                create = await outcome((master.exiftool || exiftool).extractBinaryTagToBuffer(listPreviews, source));
 
-                if (meta.result.Orientation && typeof meta.result.Orientation === 'number') {
+                if (create.success) {
 
-                    await (master.exiftool || exiftool).write(preview, {
-                        Orientation: orientations[meta.result.Orientation - 1]
-                    }, ['-overwrite_original_in_place']);
+                    const content = (!options.datauri) ? create.result.toString('base64') : 'data:image/jpeg;base64,' + create.result.toString('base64');
 
+                    main = {
+                        preview: !options.stream ? content : bufferToStream(content),
+                        source
+                    };
                 }
 
-                main = {
-                    preview: !options.stream ? preview : streamWipe(preview, options.base64, options.datauri),
-                    source
-                };
+            } else {
 
+                create = await outcome((master.exiftool || exiftool)[`extract${listPreviews.replace('Image', '')}`](source, preview));
+
+                if (create.success) {
+
+                    if (meta.result.Orientation && typeof meta.result.Orientation === 'number') {
+
+                        await (master.exiftool || exiftool).write(preview, {
+                            Orientation: orientations[meta.result.Orientation - 1]
+                        }, ['-overwrite_original_in_place']);
+
+                    }
+
+                    main = {
+                        preview: !options.stream ? await baseCheck(preview, options.base64, options.datauri) : streamWipe(preview, options.base64, options.datauri),
+                        source
+                    };
+
+                }
             }
 
         }
