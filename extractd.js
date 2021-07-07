@@ -12,6 +12,8 @@ const remove = fs.promises.unlink;
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_@');
 
+const datauriPrefix = 'data:image/jpeg;base64,';
+
 const master = {
     exiftool: null,
     persist: false
@@ -49,7 +51,7 @@ const outcome = (promise) => {
 
 function streamWipe(file, base64 = false, datauri = false) {
     const item = !base64 ? fs.createReadStream(file) : fs.createReadStream(file).pipe(new Base64Encode((!datauri ? {} : {
-        prefix: 'data:image/jpeg;base64,'
+        prefix: datauriPrefix
     })));
 
     if (base64) {
@@ -71,7 +73,7 @@ async function baseCheck(file, base64 = false, datauri = false) {
     const content = await read(file, 'base64');
     await outcome(remove(file));
 
-    return (!datauri) ? content : 'data:image/jpeg;base64,' + content;
+    return (!datauri) ? content : datauriPrefix + content;
 
 }
 
@@ -210,7 +212,7 @@ async function generate(list, options = {}, exiftool = null, items = [], create 
 
                 if (create.success) {
 
-                    const content = (!options.datauri) ? create.result.toString('base64') : 'data:image/jpeg;base64,' + create.result.toString('base64');
+                    const content = (!options.datauri) ? create.result.toString('base64') : datauriPrefix + create.result.toString('base64');
 
                     main = {
                         preview: !options.stream ? content : bufferToStream(content),
