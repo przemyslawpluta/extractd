@@ -71,7 +71,7 @@ jobs:
           command: npm test
   build-node17:
     docker:
-      - image: circleci/node:17.4.0
+      - image: circleci/node:17.0.0
     steps:
       - checkout
       - run:
