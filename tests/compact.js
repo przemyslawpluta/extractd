@@ -16,6 +16,7 @@ describe('# compact batch extract files', () => {
         const source = [
             `${samples}/nikon_d850_01.nef`,
             `${samples}/nikon_z7_ii_01.nef`,
+            `${samples}/nikon_z9_01.nef`,
             `${samples}/canon_eos_5d_mark_iv_01.cr2`,
             `${samples}/canon_eos_1d_x_mark_iii_01.cr3`,
             `${samples}/sony_a7r_iii_01.arw`,
@@ -49,7 +50,7 @@ describe('# compact batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(14);
+            expect(done).to.have.lengthOf(15);
 
         });
 
@@ -78,6 +79,18 @@ describe('# compact batch extract files', () => {
         it('nikon z7 preview should be returned in array', async () => {
 
             const item = done.filter(item => item.includes('nikon_z7')).shift();
+
+            expect(item).to.be.a('string');
+
+            expect(path.extname(item)).to.deep.equal('.jpg');
+
+            await del(item);
+
+        });
+
+        it('nikon z9 preview should be returned in array', async () => {
+
+            const item = done.filter(item => item.includes('nikon_z9')).shift();
 
             expect(item).to.be.a('string');
 

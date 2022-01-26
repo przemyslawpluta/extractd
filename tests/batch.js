@@ -16,6 +16,7 @@ describe('# batch extract files', () => {
         const source = [
             `${samples}/nikon_d850_01.nef`,
             `${samples}/nikon_z7_ii_01.nef`,
+            `${samples}/nikon_z9_01.nef`,
             `${samples}/canon_eos_5d_mark_iv_01.cr2`,
             `${samples}/canon_eos_1d_x_mark_iii_01.cr3`,
             `${samples}/sony_a7r_iii_01.arw`,
@@ -47,7 +48,7 @@ describe('# batch extract files', () => {
 
             expect(done).to.be.an('array');
 
-            expect(done).to.have.lengthOf(15);
+            expect(done).to.have.lengthOf(16);
 
         });
 
@@ -84,6 +85,23 @@ describe('# batch extract files', () => {
         it('nikon z7 preview item in the array should contain objects with preview and source files', async () => {
 
             const item = done.filter(item => item.preview).filter(item => item.preview.includes('nikon_z7')).shift();
+
+            expect(item).to.have.own.property('preview');
+            expect(item).to.have.own.property('source');
+
+            expect(path.dirname(item.source)).to.be.deep.equal(path.dirname(item.preview));
+
+            expect(path.basename(item.source, path.extname(item.source))).to.be.deep.equal(path.basename(item.preview, '.jpg'));
+
+            expect(path.extname(item.preview)).to.deep.equal('.jpg');
+
+            await del(item.preview);
+
+        });
+
+        it('nikon z9 preview item in the array should contain objects with preview and source files', async () => {
+
+            const item = done.filter(item => item.preview).filter(item => item.preview.includes('nikon_z9')).shift();
 
             expect(item).to.have.own.property('preview');
             expect(item).to.have.own.property('source');
