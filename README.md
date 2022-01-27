@@ -340,7 +340,7 @@ npm test
 
 ## Test samples
 
-All test samples are based on original raw files sourced from [photography blog](https://www.photographyblog.com/reviews) and [hasselblad](https://www.hasselblad.com/learn/sample-images/) sites.
+All test samples are based on original raw files sourced from [photography blog](https://www.photographyblog.com/reviews), [hasselblad](https://www.hasselblad.com/learn/sample-images/), and [imaging-resource](https://www.imaging-resource.com/PRODS/nikon-z9/nikon-z9GALLERY.HTM) sites.
 
 ## License
 
